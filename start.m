@@ -1,5 +1,5 @@
-% Startscript 2015/05/29
-%
+% Startscript
+% ETS
 % written by Simon D. Schmidt
 clc;
 warning off Backtrace;
