@@ -96,9 +96,8 @@ classdef WindClass < handle
             delete(instrfind({'Port'},{'DEMO'}));
             delete(instrfind({'Port'},{this.port}));
             this.status = 5;
-
-            
             this.changeOccured;
+            
             try
                 this.ardBoard = arduino(this.port);
                 this.status = 1;
