@@ -34,14 +34,15 @@ classdef MeasureWindClass_GUI < handle
             % 3D plot
         
         % Log last updateGUI function call
-        last = tic;
+        last
     end
     
     methods
         function this = MeasureWindClass_GUI(configFile) %initiate
             this.configFile = configFile;
-
+            
             this.MWC = MeasureWindClass;
+            this.startListening;
             
             this.Greeter = greeter;
             this.Greeter.greeterMain.UserData = this; % pass handle
@@ -57,9 +58,31 @@ classdef MeasureWindClass_GUI < handle
             this.Measure.measureMain.Visible = 'off';
             this.Measure.measureMain.UserData = this;
 
-            this.initPlot;
+            this.loss = figure(1);
+            this.loss.MenuBar = 'none';
+            plot(0,0);
+            this.loss.CurrentAxes.Title.String = 'Loss Coefficient';
+            hold off;
+            
+            this.velo = figure(2); 
+            this.velo.MenuBar = 'none';
+            plot(0,0);
+            this.velo.CurrentAxes.Title.String = 'Velocity Ratio';
+            hold off;
+            
+            this.axialV = figure(3); 
+            this.axialV.MenuBar = 'none';
+            plot(0,0);
+            this.axialV.CurrentAxes.Title.String = 'Velocity of Axial Compressor';
+            hold off;
+            
+            this.beta = figure(4); 
+            this.beta.MenuBar = 'none';
+            plot(0,0);
+            this.beta.CurrentAxes.Title.String = 'Pitch Angle';
+            hold off;
+            
             run(configFile);
-            this.startListening;
         end
         
         function startListening(this)
@@ -68,11 +91,9 @@ classdef MeasureWindClass_GUI < handle
         end
         
         function updateGUI(this,~,~) 
-            %fprintf('(!) Update called ');
+            %disp('(!) Update called');
             %update the GUI
-            %if (toc(this.last) > 0.05) % update only every xth second?
-                %fprintf('... and updated')
-            this.last = tic;
+            this.last = now;
             this.showWindow;
             
             switch this.MWC.measurementDefined % updates split up by windows and state
@@ -83,10 +104,9 @@ classdef MeasureWindClass_GUI < handle
                 case 2
                     this.updateMeasure;
             end
+            
             this.positionPlot;
             this.dataPlot;
-            %end
-            %fprintf('\n')
         end
         
         function showWindow(this)   % show the active window
@@ -223,32 +243,6 @@ classdef MeasureWindClass_GUI < handle
             H.YGrid = 'on';
             H.XGrid = 'on';
         end
-        
-        function initPlot(this)
-            this.loss = figure(1);
-            this.loss.MenuBar = 'none';
-            plot(0,0);
-            this.loss.CurrentAxes.Title.String = 'Loss Coefficient';
-            hold off;
-            
-            this.velo = figure(2); 
-            this.velo.MenuBar = 'none';
-            plot(0,0);
-            this.velo.CurrentAxes.Title.String = 'Velocity Ratio';
-            hold off;
-            
-            this.axialV = figure(3); 
-            this.axialV.MenuBar = 'none';
-            plot(0,0);
-            this.axialV.CurrentAxes.Title.String = 'Velocity of Axial Compressor';
-            hold off;
-            
-            this.beta = figure(4); 
-            this.beta.MenuBar = 'none';
-            plot(0,0);
-            this.beta.CurrentAxes.Title.String = 'Pitch Angle';
-            hold off;
-        end
          
         function dataPlot(this)
             if this.plotType == 2 || this.plotType == 3
@@ -273,7 +267,6 @@ classdef MeasureWindClass_GUI < handle
                         this.beta.CurrentAxes.XGrid = 'on';
                         this.beta.CurrentAxes.YGrid = 'on';
                     catch
-                        warning('could not plot');
                     end
             end
 

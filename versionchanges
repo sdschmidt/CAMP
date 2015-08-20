@@ -1,8 +1,0 @@
-setting file variables in WindClass class constructor
-Overhauling function measure_now()
-Overhauling function WindClass.writePercentages()
-Preparation for future PIDcontrol class Object in MeasureWindClass
-Moving WindClass.waitForStartup() to MeasureWindClass class constructor due to concept
-Minor GUI-performance updates
-Message of the day
-this versionchanges file ;)

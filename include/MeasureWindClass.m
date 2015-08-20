@@ -27,15 +27,15 @@ classdef MeasureWindClass < WindClass
     end
     
     properties (SetAccess = private, Hidden = true, SetObservable)
-        measuredPosition = [0 0]                       % Variables prefixed with 'measured' contain the up to this point measured values
-        measuredPoints = [0 0]                     % for Position, Points, Voltage, Pressure, Velocity, as well as the from the
+        measuredPosition                        % Variables prefixed with 'measured' contain the up to this point measured values
+        measuredPoints                          % for Position, Points, Voltage, Pressure, Velocity, as well as the from the
         measuredPvolt = zeros(1,9);             % calibration data and measurement probe dependent values LossC, the velocity
         measuredPressure = zeros(1,9);          % ration W2W1 and the Angles at which the stream hits the probe.
-        measuredVelocity = 0;
+        measuredVelocity;
         
-        measuredLossC = 0;
-        measuredW2w1 = 0;
-        measuredAngles = [0 0];
+        measuredLossC 
+        measuredW2w1 
+        measuredAngles 
         
         elapsed_time = 0;                       % constantly incremented value which measures the time after starting the measurement
         measurementDefined = 0;                 % 0: no measurement loaded, 1: measurement loaded, 2: measurement started
@@ -142,7 +142,15 @@ classdef MeasureWindClass < WindClass
             
             this.createCalibration;
             this.loadCalibration;
-            this.clearData;
+            this.measuredPosition = [];
+            this.measuredPoints = [];
+            this.measuredPvolt = [];
+            this.measuredPressure = [];
+            this.measuredVelocity = [];  
+            this.measuredLossC = [];
+            this.measuredW2w1 = [];
+            this.measuredAngles = [];
+            this.changeOccured; 
         end
         
         function createCalibration(this)
@@ -211,9 +219,17 @@ classdef MeasureWindClass < WindClass
         end
         
         function closeMeasurement(this)
+            this.measuredPosition = [];
+            this.measuredPoints = [];
+            this.measuredPvolt = [];
+            this.measuredPressure = [];
+            this.measuredVelocity = [];  
+            this.measuredLossC = [];
+            this.measuredW2w1 = [];
+            this.measuredAngles = [];
             this.measurementDefined = 0;
             this.status = 1;
-            this.clearData;      
+            this.changeOccured;        
         end
         
         function clearMeasurement(this)
@@ -226,8 +242,15 @@ classdef MeasureWindClass < WindClass
             delete([this.savelocation,this.fileLossC]);
             delete([this.savelocation,this.fileW2W1]);
             delete([this.savelocation,this.fileAngles]);
-            this.clearData;
-            fprintf('Deleted data from location: %s\n',this.savelocation);
+            this.measuredPosition = [];
+            this.measuredPoints = [];
+            this.measuredPvolt = [];
+            this.measuredPressure = [];
+            this.measuredVelocity = [];  
+            this.measuredLossC = [];
+            this.measuredW2w1 = [];
+            this.measuredAngles = [];
+            fprintf('Cleared data from location: %s\n',this.savelocation);
         end
         
         function list = getMeasurementList(this)            
@@ -370,21 +393,8 @@ classdef MeasureWindClass < WindClass
                 this.measuredAngles = dlmread([this.savelocation,this.fileAngles]);
             catch
                 warning('No measurement Data found');
-                clearData(this);
             end
             checkDataLength(this);
-            this.changeOccured;
-        end
-        
-        function clearData(this)
-            this.measuredPosition = [0 0];
-            this.measuredPoints = [0 0];
-            this.measuredPvolt = zeros(1,numel(this.pinmapPressures));
-            this.measuredPressure = zeros(1,numel(this.pinmapPressures));
-            this.measuredVelocity = 0;  
-            this.measuredLossC = 0;
-            this.measuredW2w1 = 0;
-            this.measuredAngles = [0 0];
             this.changeOccured;
         end
         
@@ -399,7 +409,7 @@ classdef MeasureWindClass < WindClass
             catch
                  warning('no Parameters saved. Please assign a valid savelocation with eg. using "this.newMeasurement" ')
             end
-            %this.changeOccured; unnecessary, it is only saving, no new data
+            this.changeOccured;
         end
        
         function loadParameters(this, file)
@@ -416,6 +426,7 @@ classdef MeasureWindClass < WindClass
             if numel(parameters) < this.noParameters
                 parameters(numel(parameters):this.noParameters) = 0;
             end
+            
             this.parameters = parameters(1:this.noParameters);
             disp('Parameters loaded');
             this.changeOccured;
@@ -432,7 +443,7 @@ classdef MeasureWindClass < WindClass
             catch
                  warning('No Points saved. Please assign a valid savelocation with eg. using "this.newMeasurement" ')
             end
-            %this.changeOccured;
+            this.changeOccured;
         end
         
         function loadPoints(this, file)
@@ -466,7 +477,7 @@ classdef MeasureWindClass < WindClass
                 warning('No Notes saved. Please assign a valid savelocation with eg. using "this.newMeasurement" ')
            
             end
-            %this.changeOccured;
+            this.changeOccured;
         end
         
         function loadNotes(this, file)
