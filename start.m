@@ -6,7 +6,7 @@ clc; clear; warning off Backtrace;
 addpath([installpath,'/include/']);
 
 ETSversionName = 'Shanghai';
-ETSversionNumber = 25;
+ETSversionNumber = 40;
 ETSmaintainerContact = 'sd.schmidt@sikos.de';
 ETSmaintainerName = 'Simon Schmidt';
 ETSwebsite = 'http://www.sidash.de/ETS/';
