@@ -5,11 +5,7 @@ clc;
 warning off Backtrace;
 
 ETSversionName = 'Shanghai';
-<<<<<<< HEAD
-ETSversionNumber = 40;
-=======
-ETSversionNumber = 22;
->>>>>>> cb5f0ff
+ETSversionNumber = 26;
 ETSmaintainerContact = 'sd.schmidt@sikos.de';
 ETSmaintainerName = 'Simon Schmidt';
 ETSwebsite = 'http://www.sidash.de/ETS/';
