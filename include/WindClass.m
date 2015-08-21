@@ -339,7 +339,7 @@ classdef WindClass < handle
         end  
         
         function value = get.velocity(this)
-            value = sqrt((this.pressure_current(8) + this.pressure_current(9))/this.rho(1)*2);
+            value = real(sqrt((this.pressure_current(8) + this.pressure_current(9))/this.rho(1)*2));
         end
         
         function this = startAxial(this)

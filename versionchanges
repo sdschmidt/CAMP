@@ -1,5 +1,2 @@
 new Configuration: pins for machines
-setting file variables in WindClass class constructor
-Overhauling functions measure_now() and WindClass.writePercentages()
-Minor GUI-performance updates
-Adding stop script
+implemented control function.
