@@ -1,5 +1,5 @@
 #!/bin/bash
-zip -r newversion.zip start.m stop.m include/ Version.html
+zip -r newversion.zip start.m stop.m include/ versionchanges Version.html
 scp newversion.zip sidash.de:/html/ETS/
 scp update.m sidash.de:/html/ETS
 scp version sidash.de:/html/ETS

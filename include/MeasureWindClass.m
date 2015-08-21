@@ -199,6 +199,12 @@ classdef MeasureWindClass < WindClass
                 end
                 
                 try
+                    this.loadCalibration;
+                catch
+                    warning('no calibration found');
+                end
+                
+                try
                     this.loadPoints
                 catch
                     warning('no points found');
@@ -209,7 +215,7 @@ classdef MeasureWindClass < WindClass
                 catch
                     warning('no notes found');
                 end
-                
+
                 this.measurementDefined = 1;
             else
                 this.measurementDefined = 0;

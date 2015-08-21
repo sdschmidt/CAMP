@@ -1,6 +1,6 @@
 % Configuration File 
 % is executed once at startup
-% 'this' refers to the created MeasureWindClass_GUI object
+% 'this' refers to the created 'MeasureWindClass_GUI' class object
 % 'this.MWC' refers to the backend Object of class 'MeasureWindClass'
 %
 % restart the program to see effect in changes
@@ -30,6 +30,18 @@ this.MWC.pinmapPressures = [0 1 2 3 4 5 6 7 8]; % Which pins of Arduino to use.
 %         7       unused
 %         8       static pressure, prandtl probe
 %         9       dynamic pressure, prandtl probe
+
+% Pins for Machines
+% writing percentage
+this.MWC.pinAxial = 42;
+this.MWC.pinSide1 = 46;
+this.MWC.pinSide2 = 44;
+this.MWC.pinWrite1 = 51;
+this.MWC.pinWrite2 = 52;    
+% start/stop
+this.MWC.pinStartStopAxial = 11;
+this.MWC.pinStartStopSide1 = 13;
+this.MWC.pinStartStopSide2 = 12;
 
 % Arduino Stepper Motors
 this.MWC.motorX = 1;

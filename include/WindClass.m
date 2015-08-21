@@ -30,6 +30,17 @@ classdef WindClass < handle
         % pins for pressure sensors
         pinmapPressures = [0 1 2 3 4 5 6 7 8]
         
+        % pins for machines
+            % writing percentage
+                pinAxial = 42;
+                pinSide1 = 46;
+                pinSide2 = 44;
+                pinWrite1 = 51;
+                pinWrite2 = 52;    
+           % start/stop
+                pinStartStopAxial = 11;
+                pinStartStopSide1 = 13;
+                pinStartStopSide2 = 12;
     end
     
     properties (SetObservable)
@@ -289,16 +300,16 @@ classdef WindClass < handle
             else
                 switch select
                     case 1
-                         RPM_sds(this.axial,1,this.ardBoard); % put ports into configuration file
+                         RPM_sds(this.axial,this.pinAxial,this.pinWrite1,this.pinWrite2,this.ardBoard); % put ports into configuration file
                          disp('written Axial')
                     case 2
-                         RPM_sds(this.side1,2,this.ardBoard); 
+                         RPM_sds(this.side1,this.pinSide1,this.pinWrite1,this.pinWrite2,this.ardBoard); 
                          disp('written Side 1')
                     case 3
-                         RPM_sds(this.side2,3,this.ardBoard);
+                         RPM_sds(this.side2,this.pinSide2,this.pinWrite1,this.pinWrite2,this.ardBoard);
                          disp('written Side 2')
                     otherwise
-                         this.writePercentage;
+                         this.writePercentage; % write all 3
                 end
             end
             this.status = 1;
@@ -334,7 +345,7 @@ classdef WindClass < handle
         function this = startAxial(this)
             this.isConnected;
             if this.axial > 0
-                digitalWrite(this.ardBoard,11,1);
+                digitalWrite(this.ardBoard,this.pinStartStopAxial,1);
                 this.running(1) = 1;
                 disp('Axial started');
             else
@@ -345,7 +356,7 @@ classdef WindClass < handle
         
         function this = stopAxial(this)
             this.isConnected;
-            digitalWrite(this.ardBoard,11,0);
+            digitalWrite(this.ardBoard,this.pinStartStopAxial,0);
             this.running(1) = 0;
             disp('Axial stoped');
             this.changeOccured;
@@ -354,7 +365,7 @@ classdef WindClass < handle
         function this = startSide1(this)
             this.isConnected;
             if this.side1 > 0
-                digitalWrite(this.ardBoard,13,1);
+                digitalWrite(this.ardBoard,this.pinStartStopSide1,1);
                 this.running(2) = 1;
                 disp('Side1 started');
             else
@@ -365,7 +376,7 @@ classdef WindClass < handle
         
         function this = stopSide1(this)
             this.isConnected;
-            digitalWrite(this.ardBoard,13,0);
+            digitalWrite(this.ardBoard,this.pinStartStopSide1,0);
             this.running(2) = 0;
             disp('Side1 stoped');
             this.changeOccured;
@@ -374,7 +385,7 @@ classdef WindClass < handle
         function this = startSide2(this)
             this.isConnected;
             if this.side2 > 0
-                digitalWrite(this.ardBoard,12,1);
+                digitalWrite(this.ardBoard,this.pinStartStopSide2,1);
                 this.running(3) = 1;
                 disp('Side2 started');
             else
@@ -385,7 +396,7 @@ classdef WindClass < handle
         
         function this = stopSide2(this)
             this.isConnected;
-            digitalWrite(this.ardBoard,12,0);
+            digitalWrite(this.ardBoard,this.pinStartStopSide2,0);
             this.running(3) = 0;
             disp('Side2 stoped');
             this.changeOccured;
