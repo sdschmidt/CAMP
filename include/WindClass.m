@@ -463,19 +463,23 @@ classdef WindClass < handle
             this.incrementY(d);
         end
         
-        function this = takeMeasurement(this)
+        function takeMeasurement(this,samples,start_t,delta_t)
            this.isConnected;
+           if nargin == 1
+               this.takeMeasurement(this.no_samples,this.start_t,this.delta_t)
+           else
            this.status = 3;
            this.changeOccured;
-           fprintf('measuring with %i samples with and %.3f s timesteps, after waiting for %.3f s ... \n',this.no_samples,this.delta_t,this.start_t);       
+           fprintf('measuring with %i samples with and %.3f s timesteps, after waiting for %.3f s ... \n',samples,delta_t,start_t);       
                tic;
-               if this.start_t
-                   pause(this.start_t);
+               if start_t
+                   pause(start_t);
                end
-               this.p_volt_current = measure_now(this.ardBoard,this.no_samples,this.delta_t,this.pinmapPressures); toc;
+               this.p_volt_current = measure_now(this.ardBoard,samples,delta_t,this.pinmapPressures); toc;
                disp('measurement taken.')
            this.status = 1;
            this.changeOccured;
+           end
         end    
         
         function out = volt2pressure(~,p_volt,pressure_range,voltage_range) 

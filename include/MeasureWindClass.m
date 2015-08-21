@@ -46,12 +46,14 @@ classdef MeasureWindClass < WindClass
     end
     
     properties
-        name = 'noname';                                        % the name of the measurement
-        basedir = [cd,'/Messdaten'];               % the location of the measurement data
-        calibrationSource = [cd,'/calibration'];   % the location from where to load the calibration data from
+        name = 'noname';                        % the name of the measurement
+        basedir = [cd,'/Messdaten'];            % the location of the measurement data
+        calibrationSource = [cd,'/calibration'];% the location from where to load the calibration data from
         calibsubfolder = 'calibration/';        % the calibration subfolder in the savelocation directory
         points = [0 0];                         % the points which should be measured
         save_precision = 6;                     % the precision with which to save the measured values
+        velocityTarget = 0;                     % which velocity to target for measurement
+        velocityTargetTolerance = 1             % tolerance of velocity in m/s             
         notes = '';                             % notes for the measurement
     end
     
@@ -333,6 +335,12 @@ classdef MeasureWindClass < WindClass
                     this.moveToTargetY;
                     fprintf('Reached %7.4f, %7.4f \n',this.currentPosition);
                     this.takeMeasurement; 
+                    while ( this.velocityTarget && ~this.velocityInTolerance)
+                        %if velocityTarget and not velocity not in
+                        %tolerance
+                        this.PIDcontrolVelocity()   % start PID-controller
+                        this.takeMeasurement        % take Measurement and check again
+                    end
                     this.saveDataAppend;
                     %this.saveParameters; % is this necessary? unnecessary
                     
@@ -539,6 +547,20 @@ classdef MeasureWindClass < WindClass
                 s = 0;
                 warning('Datalenght does not fit. Loaded Data may be corrupted');
             end
+        end
+        
+        function reached = velocityInTolerance(this)
+            if ((this.velocity > this.velocityTarget - this.velocityTargetTolerance) && ...
+                 this.velocity < this.velocityTarget + this.velocityTargetTolerance)
+                reached = true;
+            else
+                reached = false;
+            end
+        end
+        
+        function PIDcontrolVelocity(~)
+            % dummy
+            disp('control Velocity')
         end
         
         function waitForStartup(this)
