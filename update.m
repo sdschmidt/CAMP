@@ -3,7 +3,12 @@ function updateETS(installpath)
 
         disp('getting new files ...')
         tempfile = [tempdir,'newversion.zip'];
-        urlwrite('http://www.sidash.de/ETS/newversion.zip',tempfile);
+        try
+            urlwrite('http://www.sidash.de/ETS/newversion.zip',tempfile,'Timeout',600);
+        catch
+            disp('Could not retrieve update data ... exit')
+            return;
+        end
         disp('extracting ...')
         
         includedir = [installpath,'/include/'];
@@ -18,6 +23,9 @@ function updateETS(installpath)
         pcode([installpath,'/start.m'],'-inplace');
         delete([installpath,'/start.m']);  
         
+        pcode([installpath,'/stop.m'],'-inplace');
+        delete([installpath,'/stop.m']);  
+        
         pcode([installpath,'/include/WindClass.m'],'-inplace');
         pcode([installpath,'/include/MeasureWindClass.m'],'-inplace');
         pcode([installpath,'/include/MeasureWindClass_GUI.m'],'-inplace');
@@ -26,6 +34,6 @@ function updateETS(installpath)
         delete([installpath,'/include/MeasureWindClass.m']);
         delete([installpath,'/include/MeasureWindClass_GUI.m']);
         
-        disp('complete ...')
+        disp('Update complete ...')
         %delete(tempfile);
 end

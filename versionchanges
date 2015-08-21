@@ -1,0 +1,6 @@
+setting file variables in WindClass class constructor
+Overhauling functions measure_now() and WindClass.writePercentages()
+Moving WindClass.waitForStartup() to MeasureWindClass class constructor due to concept
+Minor GUI-performance updates
+Adding stop script. USE stop to close to program safely.
+Message of the day & this version changes file ;)
