@@ -2,7 +2,7 @@
 % ETS
 % written by Simon D. Schmidt
 ETSversionName = 'Shanghai';
-ETSversionNumber = 32;
+ETSversionNumber = 33;
 ETSmaintainerContact = 'sd.schmidt@sikos.de';
 ETSmaintainerName = 'Simon Schmidt';
 ETSwebsite = 'http://www.sidash.de/ETS/';

@@ -1,5 +1,5 @@
 function updateETS(installpath)
-        fprintf('Installing to %s',installpath);
+        fprintf('Installing to %s\n',installpath);
 
         disp('getting new files ...')
         tempfile = [tempdir,'newversion.zip'];

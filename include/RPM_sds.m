@@ -1,5 +1,5 @@
 function RPM_sds(percentage, pinMachine, pinWrite1, pinWrite2,  arduinoObject)
-%RPM_sds 
+%RPM_sds writes Percentage to machine using arduino
 bits = ['0011',dec2bin(round( percentage * 4095),12)];
 
 arduinoObject.digitalWrite(pinMachine, 1);

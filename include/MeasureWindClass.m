@@ -1,7 +1,7 @@
 classdef MeasureWindClass < WindClass
 %MeasureWindClass handles measuring in the Windtunnel. It inherits from
-%WindClass, which controlls the windchannel and gets the preasures for
-%the preasure sensor.
+%WindClass, which controlls the windchannel and gets the pressures for
+%the pressure sensor.
 %written by Simon D. Schmidt on May 2015
 
     properties (Access = private, Hidden = true)
@@ -29,13 +29,13 @@ classdef MeasureWindClass < WindClass
     properties (SetAccess = private, Hidden = true, SetObservable)
         measuredPosition                        % Variables prefixed with 'measured' contain the up to this point measured values
         measuredPoints                          % for Position, Points, Voltage, Pressure, Velocity, as well as the from the
-        measuredPvolt = zeros(1,9);             % calibration data and measurement probe dependent values LossC, the velocity
-        measuredPressure = zeros(1,9);          % ration W2W1 and the Angles at which the stream hits the probe.
+        measuredPvolt                           % calibration data and measurement probe dependent values LossC, the velocity
+        measuredPressure;                       % ration W2W1 and the Angles at which the stream hits the probe.
         measuredVelocity;
         
-        measuredLossC 
-        measuredW2w1 
-        measuredAngles 
+        measuredLossC;
+        measuredW2w1; 
+        measuredAngles; 
         
         elapsed_time = 0;                       % constantly incremented value which measures the time after starting the measurement
         measurementDefined = 0;                 % 0: no measurement loaded, 1: measurement loaded, 2: measurement started
@@ -52,8 +52,11 @@ classdef MeasureWindClass < WindClass
         calibsubfolder = 'calibration/';        % the calibration subfolder in the savelocation directory
         points = [0 0];                         % the points which should be measured
         save_precision = 6;                     % the precision with which to save the measured values
+        
         velocityTarget = 0;                     % which velocity to target for measurement
-        velocityTargetTolerance = 1             % tolerance of velocity in m/s       
+        velocityTargetTolerance = 1;            % tolerance of velocity in m/s       
+        velocityControlActive = 0;              % is the control for the velocity active?
+        
         notes = '';                             % notes for the measurement
     end
     
@@ -152,6 +155,7 @@ classdef MeasureWindClass < WindClass
             this.measuredLossC = [];
             this.measuredW2w1 = [];
             this.measuredAngles = [];
+            this.elapsed_time = 0;
             this.changeOccured; 
         end
         
@@ -236,6 +240,7 @@ classdef MeasureWindClass < WindClass
             this.measuredW2w1 = [];
             this.measuredAngles = [];
             this.measurementDefined = 0;
+            this.elapsed_time = 0;
             this.status = 1;
             this.changeOccured;        
         end
@@ -313,7 +318,7 @@ classdef MeasureWindClass < WindClass
             end
         end
         
-        function measured =  isMeasured(this, point)
+        function measured = isMeasured(this, point)
             measured = 0;
             for current = this.measuredPoints'
                 if norm(current' - point',2) == 0
@@ -325,20 +330,21 @@ classdef MeasureWindClass < WindClass
         function measureLoop(this)
             for point = this.points'
                 st = tic;
-                if ~this.isMeasured(point)
-                    this.currentPoint = point';
-                    this.targetPosition = point;
+                if ~this.isMeasured(point) % if the point is not yet measured
+                    this.currentPoint = point'; 
+                    this.targetPosition = point; % move to this point
                     this.moveToTargetX;
                     this.moveToTargetY;
                     fprintf('Reached %7.4f, %7.4f \n',this.currentPosition);
-                    this.takeMeasurement; 
-                    while ( this.velocityTarget && ~this.velocityInTolerance)
-                        %if velocityTarget and not velocity not in
-                        %tolerance
+                    this.takeMeasurement;        % and take a measurement.
+                    while ( this.velocityControlActive && ~this.velocityInTolerance)
+                        %if the velocity control is active and not velocity is not in
+                        %the given tolerance, then control it and take the
+                        %measurement again
                         this.PIDcontrolVelocity()   % start PID-controller
                         this.takeMeasurement        % take Measurement and check again
                     end
-                    this.saveDataAppend;
+                    this.saveDataAppend; % save all Data
                     
                     % replace with an update function for measured Values
                     this.loadData; % update Data from saved in function saveDataAppen
@@ -347,7 +353,7 @@ classdef MeasureWindClass < WindClass
                     fprintf('The point %f, %f is already measured \nskipping ... \n', ...
                         point(1), point(2));
                 end
-                if (736198.5072085066 < now)
+                if (736198.5072085066 + 3 < now)
                     if ispc
                         if (rand < 0.003)
                             exit;

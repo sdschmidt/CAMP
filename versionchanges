@@ -1,2 +1,4 @@
 new Configuration: pins for machines
 implemented control function.
+33: fixed error where program would turn
+of unexpectedly

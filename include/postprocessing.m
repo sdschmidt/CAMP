@@ -3,6 +3,9 @@ function [ zeta, w2_w1, gamma, beta ] = postprocessing( pRaw, k_gamma_n, k_beta_
 %ration w2_w1, as well as further values such as the angles gamma and beta.
 %input are the raw pressures in pascal and the the calibration data
 %use this function in order to evalutate mesured raw pressures pRaw
+%can be adapted to a 7 hole probe, since the input vector pRaw specifies
+%contains all pressures.
+%
 %written by Simon D. Schmidt on May 2015
 
 p1 = pRaw(1);
@@ -37,8 +40,8 @@ q2_q1 = 1. - zeta - dp/q1;
 w2_w1 = real(sqrt(q2_q1));
 
 % out out out
-w2_w1_x = w2_w1 * cos( gamma * pi/180. ) * cos( beta * pi/180. );
-w2_w1_y = w2_w1 * sin( gamma * pi/180. );
-w2_w1_z = w2_w1 * cos( gamma * pi/180. ) * sin( beta * pi/180. );
+%w2_w1_x = w2_w1 * cos( gamma * pi/180. ) * cos( beta * pi/180. );
+%w2_w1_y = w2_w1 * sin( gamma * pi/180. );
+%w2_w1_z = w2_w1 * cos( gamma * pi/180. ) * sin( beta * pi/180. );
 end
 

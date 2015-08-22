@@ -107,7 +107,6 @@ classdef WindClass < handle
             delete(instrfind({'Port'},{'DEMO'}));
             delete(instrfind({'Port'},{this.port}));
             this.status = 5;
-
             
             this.changeOccured;
             try
@@ -300,7 +299,7 @@ classdef WindClass < handle
             else
                 switch select
                     case 1
-                         RPM_sds(this.axial,this.pinAxial,this.pinWrite1,this.pinWrite2,this.ardBoard); % put ports into configuration file
+                         RPM_sds(this.axial,this.pinAxial,this.pinWrite1,this.pinWrite2,this.ardBoard); 
                          disp('written Axial')
                     case 2
                          RPM_sds(this.side1,this.pinSide1,this.pinWrite1,this.pinWrite2,this.ardBoard); 
@@ -342,7 +341,11 @@ classdef WindClass < handle
             value = real(sqrt((this.pressure_current(8) + this.pressure_current(9))/this.rho(1)*2));
         end
         
-        function this = startAxial(this)
+        function this = startstopMachine(~,pin,bool)
+            
+        end
+        
+        function this = startAxial(this)   %% write function start/stop machine
             this.isConnected;
             if this.axial > 0
                 digitalWrite(this.ardBoard,this.pinStartStopAxial,1);
@@ -408,8 +411,8 @@ classdef WindClass < handle
             this.stopSide2;
             this.changeOccured;
         end
-
-        function this = incrementX(this, increment) 
+        
+        function this = incrementX(this, increment)  %% write function increment machine
             this.isCalibrated; % do not move probe if current position has not been user set
             this.isConnected;
             this.status = 2;
@@ -428,7 +431,7 @@ classdef WindClass < handle
             end
             this.status = 1;
             this.changeOccured;
-        end
+        end 
         
         function this = incrementY(this, increment)
             this.isCalibrated; % do not move probe if current position has not been user set
