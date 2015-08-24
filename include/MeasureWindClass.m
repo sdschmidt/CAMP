@@ -52,11 +52,7 @@ classdef MeasureWindClass < WindClass
         calibsubfolder = 'calibration/';        % the calibration subfolder in the savelocation directory
         points = [0 0];                         % the points which should be measured
         save_precision = 6;                     % the precision with which to save the measured values
-        
-        velocityTarget = 0;                     % which velocity to target for measurement
-        velocityTargetTolerance = 1;            % tolerance of velocity in m/s       
-        velocityControlActive = 0;              % is the control for the velocity active?
-        
+                
         notes = '';                             % notes for the measurement
     end
     
@@ -550,46 +546,7 @@ classdef MeasureWindClass < WindClass
                 warning('Datalenght does not fit. Loaded Data may be corrupted');
             end
         end
-        
-        function set.velocityControlActive(this,value)
-            this.velocityControlActive = value;
-            this.changeOccured;
-        end
-        
-        function reached = velocityInTolerance(this)
-            error = this.velocityTarget - this.velocity; 
-            if (abs(error) < abs(this.velocityTargetTolerance))
-                reached = true;
-            else
-                reached = false;
-            end
-        end
-        
-        function axialPercentage = feedforward(this)
-            axialPercentage = this.velocityTarget/2*3/100 ; % based on empirics
-        end
-        
-        function PIDcontrolVelocity(this) 
-            samples = 1; delta_t = 0; start_t = 0;
-            % dummy
-            P = 0.015; Ti = 10000000000000000; Td = 0;
-            
-            Ierror = 0;
-            this.takeMeasurement(samples,start_t,delta_t); a = tic;
-            lasterror = this.velocityTarget - this.velocity;
-                for i = 1:10  %% what could be the stop-criterium?
-                    this.takeMeasurement(samples,start_t,delta_t); dt = toc(a); a = tic;
-                    error = this.velocityTarget - this.velocity;
-                    Ierror = Ierror + error * dt;
-                    Derror = (error - lasterror)/dt; lasterror = error;
-                    feedback = P * (error + 1/Ti * Ierror + Td * Derror);%+ this.feedforward;
-                    fprintf('error %7.2f -> feedback %10.4f\n',error,feedback);
-                    this.axial = feedback;
-                    pause(1)
-                end
-            disp('control Velocity')
-        end
-        
+                
         function startup(this)
             this.startAxial;
             this.startSide1;

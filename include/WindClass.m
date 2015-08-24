@@ -72,6 +72,10 @@ classdef WindClass < handle
         start_t = 0;
         delta_t = 0.2;
         p_volt_current = zeros(1,9);
+        
+        velocityTarget = 0;                     % which velocity to target for measurement
+        velocityTargetTolerance = 1;            % tolerance of velocity in m/s       
+        velocityControlActive = 0;              % is the control for the velocity active?
     end
     
     properties (Dependent)
@@ -169,6 +173,8 @@ classdef WindClass < handle
                     string = sprintf('waiting for startup');
                 case 7
                     string = sprintf('saving parmeters');
+                case 8
+                    string = sprintf('PId control active');
                 case 66
                     string = sprintf('ERROR ...');
                 otherwise
@@ -534,6 +540,48 @@ classdef WindClass < handle
                 
         function changeOccured(this)
             this.changed = now;
+        end
+        
+                function set.velocityControlActive(this,value)
+            this.velocityControlActive = value;
+            this.changeOccured;
+        end
+        
+        function reached = velocityInTolerance(this)
+            error = this.velocityTarget - this.velocity; 
+            if (abs(error) < abs(this.velocityTargetTolerance))
+                reached = true;
+            else
+                reached = false;
+            end
+        end
+        
+        function axialPercentage = feedforward(this)
+            axialPercentage = this.velocityTarget/2*3/100 ; % based on empirics
+        end
+        
+        function PIDcontrolVelocity(this) 
+            this.status = 7;
+            samples = 1; deltaT = 0; startT = 0;
+            % dummy
+            P = 0.015; Ti = 10000000000000000; Td = 0;
+            
+            Ierror = 0;
+            this.takeMeasurement(samples,startT,deltaT); a = tic;
+            lasterror = this.velocityTarget - this.velocity;
+                for i = 1:10  %% what could be the stop-criterium?
+                    this.takeMeasurement(samples,startT,deltaT); dt = toc(a); a = tic;
+                    error = this.velocityTarget - this.velocity;
+                    Ierror = Ierror + error * dt;
+                    Derror = (error - lasterror)/dt; lasterror = error;
+                    feedback = P * (error + 1/Ti * Ierror + Td * Derror);%+ this.feedforward;
+                    fprintf('error %7.2f -> feedback %10.4f\n',error,feedback);
+                    this.axial = feedback;
+                    pause(1)
+                    if this.interrupt; this.interrupt = 0; this.status = 1; return; end % quit on interrupt
+                end
+            disp('control Velocity')
+            this.status = 1;
         end
     end
 end
