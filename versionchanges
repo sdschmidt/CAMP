@@ -1,4 +1,3 @@
-new Configuration: pins for machines
-implemented control function.
-33: fixed error where program would turn
-of unexpectedly
+33: fixed error where program would turn of unexpectedly
+35: implemented control function in GUI. todo: adjust PID
+parameters and configFile

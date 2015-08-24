@@ -139,6 +139,8 @@ classdef MeasureWindClass_GUI < handle
             else
                 this.Main.axialPercentage.String = [num2str(this.MWC.axial * 100),' %'];
             end
+            
+            this.Main.velocityTolerance.String = ['within ',num2str(this.MWC.velocityTargetTolerance),' m/s'];
             this.Main.side1percentage.String = [num2str(this.MWC.side1 * 100),' %'];
             this.Main.side2percentage.String = [num2str(this.MWC.side2 * 100),' %'];
             

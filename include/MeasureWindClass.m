@@ -20,7 +20,7 @@ classdef MeasureWindClass < WindClass
         fileW2W1 = 'velocityRatio.dat';
         fileAngles = 'angles.dat';
         
-        noParameters = 15;
+        noParameters = 18;
             
             % installation directory
         installdir = cd;
@@ -338,6 +338,7 @@ classdef MeasureWindClass < WindClass
                         %the given tolerance, then control it and take the
                         %measurement again
                         this.PIDcontrolVelocity()   % start PID-controller
+                        if this.interrupt; this.interrupt = 0; this.status = 1; return; end
                         this.takeMeasurement        % take Measurement and check again
                     end
                     this.saveDataAppend; % save all Data
@@ -520,6 +521,10 @@ classdef MeasureWindClass < WindClass
             value(13) = this.rho;
             value(14) = this.elapsed_time;
             value(15) = this.start_t;
+            value(16) = this.velocityTarget;
+            value(17) = this.velocityTargetTolerance;
+            value(18) = this.velocityControlActive;
+            
         end
         
         function set.parameters(this, value)
@@ -531,6 +536,9 @@ classdef MeasureWindClass < WindClass
             this.rho = value(13);
             this.elapsed_time = value(14);
             this.start_t = value(15);
+            this.velocityTarget = value(16);
+            this.velocityTargetTolerance = value(17);
+            this.velocityControlActive = value(18);
             this.changeOccured;
         end
         
@@ -551,7 +559,9 @@ classdef MeasureWindClass < WindClass
             this.startAxial;
             this.startSide1;
             this.startSide2;
-            this.waitForStartup
+            if ~this.velocityControlActive
+                this.waitForStartup;
+            end
         end
         
         function waitForStartup(this)
