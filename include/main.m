@@ -22,7 +22,7 @@ function varargout = main(varargin)
 
 % Edit the above text to modify the response to help main
 
-% Last Modified by GUIDE v2.5 14-Jul-2015 20:32:59
+% Last Modified by GUIDE v2.5 24-Aug-2015 10:38:36
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -248,8 +248,13 @@ function axialPercentage_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'String') returns contents of axialPercentage as text
 %        str2double(get(hObject,'String')) returns contents of axialPercentage as a double
-handles.mainMain.UserData.MWC.axial = str2double(hObject.String)/100;
-
+numberstr =  regexp(hObject.String,'((\d+)?(\.\d+)?)','tokens');
+    if ~handles.mainMain.UserData.MWC.velocityControlActive
+        handles.mainMain.UserData.MWC.axial = str2double(numberstr{1}{1})/100;
+    else
+        handles.mainMain.UserData.MWC.velocityTarget = str2double(numberstr{1}{1});
+    end
+    
 % --- Executes during object creation, after setting all properties.
 function axialPercentage_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to axialPercentage (see GCBO)
@@ -271,7 +276,8 @@ function side1percentage_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'String') returns contents of side1percentage as text
 %        str2double(get(hObject,'String')) returns contents of side1percentage as a double
-handles.mainMain.UserData.MWC.side1 = str2double(hObject.String)/100;
+numberstr =  regexp(hObject.String,'((\d+)?(\.\d+)?)','tokens');
+handles.mainMain.UserData.MWC.side1 = str2double(numberstr{1}{1})/100;
 
 % --- Executes during object creation, after setting all properties.
 function side1percentage_CreateFcn(hObject, eventdata, handles)
@@ -285,8 +291,6 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
-
-
 function side2percentage_Callback(hObject, eventdata, handles)
 % hObject    handle to side2percentage (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -294,7 +298,8 @@ function side2percentage_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'String') returns contents of side2percentage as text
 %        str2double(get(hObject,'String')) returns contents of side2percentage as a double
-handles.mainMain.UserData.MWC.side2 = str2double(hObject.String)/100;
+numberstr =  regexp(hObject.String,'((\d+)?(\.\d+)?)','tokens');
+handles.mainMain.UserData.MWC.side2 = str2double(numberstr{1}{1})/100;
 
 % --- Executes during object creation, after setting all properties.
 function side2percentage_CreateFcn(hObject, eventdata, handles)
@@ -1080,3 +1085,13 @@ function test_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+
+% --- Executes on button press in PIDcontrol.
+function PIDcontrol_Callback(hObject, eventdata, handles)
+% hObject    handle to PIDcontrol (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of PIDcontrol
+handles.mainMain.UserData.MWC.velocityControlActive = hObject.Value;

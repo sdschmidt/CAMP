@@ -134,9 +134,19 @@ classdef MeasureWindClass_GUI < handle
         end
         
         function updateMain(this)
-            this.Main.axialPercentage.String = this.MWC.axial * 100;
-            this.Main.side1percentage.String = this.MWC.side1 * 100; 
-            this.Main.side2percentage.String = this.MWC.side2 * 100;
+            if this.MWC.velocityControlActive
+                this.Main.axialPercentage.String = [num2str(this.MWC.velocityTarget), ' m/s'];
+            else
+                this.Main.axialPercentage.String = [num2str(this.MWC.axial * 100),' %'];
+            end
+            this.Main.side1percentage.String = [num2str(this.MWC.side1 * 100),' %'];
+            this.Main.side2percentage.String = [num2str(this.MWC.side2 * 100),' %'];
+            
+            this.Main.axialToggle.Value = this.MWC.running(1);
+            this.Main.side1Toggle.Value = this.MWC.running(2);
+            this.Main.side2Toggle.Value = this.MWC.running(3);
+            
+            this.Main.PIDcontrol.Value = this.MWC.velocityControlActive;
             
             this.Main.plotType.Value = this.plotType;
             
@@ -187,8 +197,6 @@ classdef MeasureWindClass_GUI < handle
                 this.Main.move.Visible = 'off';
             end
             
-            
-
                 k = 0;
                 for a = this.MWC.points'
                     k = k + 1;

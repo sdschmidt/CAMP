@@ -551,6 +551,11 @@ classdef MeasureWindClass < WindClass
             end
         end
         
+        function set.velocityControlActive(this,value)
+            this.velocityControlActive = value;
+            this.changeOccured;
+        end
+        
         function reached = velocityInTolerance(this)
             error = this.velocityTarget - this.velocity; 
             if (abs(error) < abs(this.velocityTargetTolerance))
