@@ -1095,13 +1095,6 @@ function PIDcontrol_Callback(hObject, eventdata, handles)
 
 % Hint: get(hObject,'Value') returns toggle state of PIDcontrol
     handles.mainMain.UserData.MWC.velocityControlActive = hObject.Value;
-    if hObject.Value
-        handles.velocityTolerance.Visible = 'on';
-        handles.startPID.Visible = 'on';
-    else
-        handles.velocityTolerance.Visible = 'off';
-        handles.startPID.Visible = 'off';
-    end
 
 
 % --- Executes on button press in startPID.
