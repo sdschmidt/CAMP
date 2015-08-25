@@ -136,8 +136,12 @@ classdef MeasureWindClass_GUI < handle
         function updateMain(this)
             if this.MWC.velocityControlActive
                 this.Main.axialPercentage.String = [num2str(this.MWC.velocityTarget), ' m/s'];
+                this.Main.velocityTolerance.Visible = 'on';
+                this.Main.startPID.Visible = 'on';
             else
                 this.Main.axialPercentage.String = [num2str(this.MWC.axial * 100),' %'];
+                this.Main.velocityTolerance.Visible = 'off';
+                this.Main.startPID.Visible = 'off';
             end
             
             this.Main.velocityTolerance.String = ['within ',num2str(this.MWC.velocityTargetTolerance),' m/s'];

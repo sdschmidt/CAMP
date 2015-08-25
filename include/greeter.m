@@ -23,7 +23,7 @@ function varargout = greeter(varargin)
 
 % Edit the above text to modify the response to help greeter
 
-% Last Modified by GUIDE v2.5 18-Aug-2015 21:08:01
+% Last Modified by GUIDE v2.5 25-Aug-2015 08:19:29
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -217,3 +217,10 @@ function savenotes_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 handles.greeterMain.UserData.MWC.saveNotes;
+
+
+% --- Executes on button press in versionChanges.
+function versionChanges_Callback(hObject, eventdata, handles)
+% hObject    handle to versionChanges (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
