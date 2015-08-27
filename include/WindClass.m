@@ -28,7 +28,8 @@ classdef WindClass < handle
         calibrationY = 205/65000; % 205mm correspond to 65000 steps
         
         % pins for pressure sensors
-        pinmapPressures = [0 1 2 3 4 5 6 7 8]
+        pinmapPressures = [0 1 2 3 4 5 6 7 8];
+        pinmapNegative =  [0 0 0 0 0 0 0 0 0];
         
         % pins for machines
             % writing percentage
@@ -343,11 +344,11 @@ classdef WindClass < handle
         end
         
         function value = get.pressure_current(this)
-            value =  this.volt2pressure(this.p_volt_current,this.pressure_range,this.voltage_range);
+            value =  this.pinmapNegative.*this.volt2pressure(this.p_volt_current,this.pressure_range,this.voltage_range);
         end  
         
         function value = get.velocity(this)
-            value = real(sqrt((this.pressure_current(8) + this.pressure_current(9))/this.rho(1)*2));
+            value = real(sqrt((this.pressure_current(8) - this.pressure_current(9))/this.rho(1)*2));
         end
         
         function this = startstopMachine(~,pin,bool)

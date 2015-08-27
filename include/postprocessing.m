@@ -13,18 +13,18 @@ p2 = pRaw(2);
 p3 = pRaw(3);
 p4 = pRaw(4);
 
-p0 = pRaw(5); % center hole
+p0 = pRaw(5);                                           % center hole
 
 pTot = pRaw(8);
-pStat = -pRaw(9);
+pStat = pRaw(9);
 
-p = [p1 p2 p3 p4 p0]; % probe pressures
+p = [p1 p2 p3 p4 p0];                                   % probe pressures
 
-sum1 = rms(p(1:5) - mean(p(1:5))) + p0 - mean(p(1:4)); % sum_1 %checked
-k_gamma = (p(3) - p(1) )/sum1; % k parameters
+sum1 = rms(p(1:5) - mean(p(1:5))) + p0 - mean(p(1:4));  % sum_1 %checked
+k_gamma = (p(3) - p(1) )/sum1;                          % k parameters
 k_beta = (p(4) - p(2) )/sum1;
 
-    %out %out
+%out %out
 [gamma, beta, k_pt, kp] = interpoly( gamma_n, beta_n, k_gamma_n, k_beta_n, k_pt_n, k_p_n, k_gamma, k_beta );
         
 dp = p0 - pStat - kp * sum1;

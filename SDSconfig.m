@@ -15,9 +15,11 @@ this.MWC.calibrationSource = [cd,'/calibration'];
 this.MWC.port = 'COM3';
 
 % Pressure Sensors
-this.MWC.pressure_range = [-22 22];             % in mbar
-this.MWC.voltage_range  = [102 920];            % values 1 to 2013
+this.MWC.pressure_range =  [-22 22];             % in mbar
+this.MWC.voltage_range  =  [102 920];            % values 1 to 2013
 this.MWC.pinmapPressures = [0 1 2 3 4 5 6 7 8]; % Which pins of Arduino to use.
+this.MWC.pinmapNegative =  [0 0 0 0 0 0 0 0 1]; % for unidirectional, set to one when pressure on corresponding pin is negative, for bidirection set all to 0
+
 % those pins correspond to
 % in postprocessing.m:
 %         Nr      used as
