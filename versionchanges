@@ -1,3 +1,4 @@
 33: fixed error where program would turn of unexpectedly
 35: implemented control function in GUI. todo: adjust PID
+37: improvements & release
 parameters and configFile

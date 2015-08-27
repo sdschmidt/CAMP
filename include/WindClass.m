@@ -41,6 +41,9 @@ classdef WindClass < handle
                 pinStartStopAxial = 11;
                 pinStartStopSide1 = 13;
                 pinStartStopSide2 = 12;
+                
+        % PID control parameters
+            pidParameters = [0.0053, 5, 0.1]; 
     end
     
     properties (SetObservable)
@@ -418,7 +421,7 @@ classdef WindClass < handle
             this.changeOccured;
         end
         
-        function this = incrementX(this, increment)  %% write function increment machine
+        function incrementX(this, increment)  %% write function increment machine
             this.isCalibrated; % do not move probe if current position has not been user set
             this.isConnected;
             this.status = 2;
@@ -439,7 +442,7 @@ classdef WindClass < handle
             this.changeOccured;
         end 
         
-        function this = incrementY(this, increment)
+        function incrementY(this, increment)
             this.isCalibrated; % do not move probe if current position has not been user set
             this.isConnected; 
             this.status = 2;
@@ -460,13 +463,13 @@ classdef WindClass < handle
             this.changeOccured;
         end
         
-        function this = moveToTargetX(this)
+        function moveToTargetX(this)
             d = this.target.x - this.current.x;
             fprintf('Moving to x-target: %10.5f\n', this.target.x)
             this.incrementX(d);
         end
         
-        function this = moveToTargetY(this)
+        function moveToTargetY(this)
             d = this.target.y - this.current.y;
             fprintf('Moving to y-target: %10.5f\n', this.target.y)
             this.incrementY(d);
@@ -547,59 +550,106 @@ classdef WindClass < handle
             this.changeOccured;
         end
         
+        function set.velocityTarget(this,value)
+            this.velocityTarget = value;
+            this.changeOccured;
+        end
+        
         function set.velocityTargetTolerance(this,value)
             this.velocityTargetTolerance = value;
             this.changeOccured;
         end
         
-        function reached = velocityInTolerance(this)        % test if the velocity is in the given tolerance
+        function reached = velocityInTolerance(this)            % test if the velocity is in the given tolerance
             error = this.velocityTarget - this.velocity; 
             if (abs(error) < abs(this.velocityTargetTolerance))
                 reached = true;
+                fprintf('Velocity in Tolerance\n');
             else
                 reached = false;
+                fprintf('Velocity NOT in Tolerance\n');
             end
         end
         
-        function axialPercentage = feedforward(this)        % feedforward signal for axial compressor
-            axialPercentage = this.velocityTarget/2*3/100 ; % based on empirics
+       function reached = velocityInHalfTolerance(this)         % test if the velocity is in half of the given tolerance
+            error = this.velocityTarget - this.velocity; 
+            if (abs(error) < abs(this.velocityTargetTolerance/2))
+                reached = true;
+                fprintf('Velocity in half Tolerance\n');
+            else
+                reached = false;
+                fprintf('Velocity NOT in half Tolerance\n');
+            end
+        end
+        
+        function axialPercentage = feedforward(this)            % feedforward signal for axial compressor
+            axialPercentage = this.velocityTarget/2*3/100 ;     % based on empirics
         end
         
         function PIDcontrolVelocity(this) 
-            if ispc
-                exit;
-            end
-            this.status = 7;
-            samples = 1; deltaT = 0; startT = 0;       % parameters for measurements during control
-            P = 0.015; Ti = 10000000000000000; Td = 0; % parameters for PID controller
-            waitTime = 1;                              % time between each control output
-            convergedTime = 10;                        % timespan the velocity has to be in the tolerance in order to be declared as converged
             
+            startSignal = this.running(1)*this.axial;
+            this.status = 7;
+            samples = 20; deltaT = 0; startT = 0;               % parameters for measurements during control
+            %P = 0.0075; Ti = 5; Td = 0.1;                       % parameters for PID controller OK 10 m/s - 40m/s
+            %P = 0.0053; Ti = 5; Td = 0.1;                          % of fuer 20 m/s
+            %P = 0.005; Ti = 7.5; Td = 0;                       % 10 m/s - 40m/s
+            %P = 0.0053; Ti = 8; Td = 0;               % accurate for 40 m/s 20m/s  within+- 0.125 m/s tolerance
+                                         % timespan the velocity has to be in the tolerance in order to be declared as converged
+            P = this.pidParameters(1);
+            Ti = this.pidParameters(2);
+            Td = this.pidParameters(3);
+            convergedTime = 2*Ti;            
             this.takeMeasurement(samples,startT,deltaT); a = tic;
             lasterror = this.velocityTarget - this.velocity;
             Ierror = 0;
             converged  = 0;
             convergedCounter = tic;
-                while ((~converged) && (this.velocityControlActive))
+            g = tic;
+            u = 0;
+            v = 0;
+            w = 0;
+            x = 0;
+            y = 0;
+            z = 0;
+            i = 0;
+            
+            h = figure(8); plot(0,0)
+            f = h.CurrentAxes; hold on;
+                while ((~converged) && (this.velocityControlActive) && ~(this.interrupt))
+                    i = i+1;
+                    v(i) = this.velocityTarget; %#ok<AGROW>
                     this.takeMeasurement(samples,startT,deltaT); dt = toc(a); a = tic;
+                    clc;
+                    x(i) = toc(g); %#ok<AGROW>
                     error = this.velocityTarget - this.velocity;
-                    Ierror = Ierror + error * dt;
+                    z(i) = this.velocity; %#ok<AGROW>
+                    Ierror = Ierror + error * dt; 
+                    w(i) = Ierror; %#ok<AGROW>
                     Derror = (error - lasterror)/dt; lasterror = error;
-                    feedback = P * (error + 1/Ti * Ierror + Td * Derror);%+ this.feedforward;
+                    u(i) = Derror; %#ok<AGROW>
+                    feedback = startSignal + P * (error + 1/Ti * Ierror + Td * Derror); %+ this.feedforward;
                     this.axial = feedback;
+                    y(i) = this.axial; %#ok<AGROW>
                     if ~this.running(1)
                         this.startAxial;
                     end
+                    fprintf('para: %f/%f/%f\n',P,Ti,Td);
                     fprintf('error %7.2f -> feedback %10.4f\n\n',error,feedback);
-                    if ~velocityInTolerance(this);  % if the velocity is not in the tolerance
-                        convergedCounter = tic;     % reset counter
+                    if ~velocityInHalfTolerance(this);  % if the velocity is not in the half tolerance
+                        convergedCounter = tic;         % reset counter
+                        
                     else
                         if (toc(convergedCounter) >= convergedTime) % if the velocity has been for convergedTime in the tolerance
-                            converged = 1;                          % then declare the control as converged
+                            converged = 1;                  % then declare the control as converged
                         end
                     end
-                    pause(waitTime)
-                    if this.interrupt; this.status = 1; return; end % quit on interrupt
+                    plot(f,x,z,'black'); hold on;
+                    plot(f,x,y*100,'red');
+                    plot(f,x,w/25,'blue');
+                    plot(f,x,u,'green');
+                    plot(f,x,v,'black--');hold off;
+                    pause(0.0001); %% needed to check for interrupt    
                 end
             this.status = 1;
         end

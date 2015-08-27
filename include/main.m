@@ -22,7 +22,7 @@ function varargout = main(varargin)
 
 % Edit the above text to modify the response to help main
 
-% Last Modified by GUIDE v2.5 24-Aug-2015 16:40:48
+% Last Modified by GUIDE v2.5 26-Aug-2015 16:46:35
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -1140,6 +1140,80 @@ handles.mainMain.UserData.MWC.velocityTargetTolerance = str2double(numberstr{1}{
 % --- Executes during object creation, after setting all properties.
 function velocityTolerance_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to velocityTolerance (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function pidP_Callback(hObject, eventdata, handles)
+% hObject    handle to pidP (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of pidP as text
+%        str2double(get(hObject,'String')) returns contents of pidP as a double
+numberstr =  regexp(hObject.String,'((\d+)?(\.\d+)?)','tokens');
+handles.mainMain.UserData.MWC.pidParameters(1) = str2double(numberstr{1}{1});
+
+% --- Executes during object creation, after setting all properties.
+function pidP_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to pidP (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function pidTi_Callback(hObject, eventdata, handles)
+% hObject    handle to pidTi (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of pidTi as text
+%        str2double(get(hObject,'String')) returns contents of pidTi as a double
+numberstr =  regexp(hObject.String,'((\d+)?(\.\d+)?)','tokens');
+handles.mainMain.UserData.MWC.pidParameters(2) = str2double(numberstr{1}{1});
+
+
+% --- Executes during object creation, after setting all properties.
+function pidTi_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to pidTi (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function pidTd_Callback(hObject, eventdata, handles)
+% hObject    handle to pidTd (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of pidTd as text
+%        str2double(get(hObject,'String')) returns contents of pidTd as a double
+numberstr =  regexp(hObject.String,'((\d+)?(\.\d+)?)','tokens');
+handles.mainMain.UserData.MWC.pidParameters(3) = str2double(numberstr{1}{1});
+
+
+% --- Executes during object creation, after setting all properties.
+function pidTd_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to pidTd (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 

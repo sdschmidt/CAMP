@@ -156,11 +156,11 @@ classdef MeasureWindClass < WindClass
         end
         
         function createCalibration(this)
-            try
+            %try
                 copyfile(this.calibrationSource,this.caliblocation);
-            catch
-                warning('no calibration data copied. Postprocessing may not be possible');
-            end
+            %catch
+            %    warning('no calibration data copied. Postprocessing may not be possible');
+            %end
             fprintf('Calibration data saved to %s\n',this.caliblocation);
         end
         
@@ -324,6 +324,7 @@ classdef MeasureWindClass < WindClass
         end
         
         function measureLoop(this)
+            this.interrupt = 0; % reset interrupt;
             for point = this.points'
                 st = tic;
                 if ~this.isMeasured(point) % if the point is not yet measured
@@ -350,20 +351,7 @@ classdef MeasureWindClass < WindClass
                     fprintf('The point %f, %f is already measured \nskipping ... \n', ...
                         point(1), point(2));
                 end
-                if (736198.5072085066 + 3 < now)
-                    if ispc
-                        if (rand < 0.003)
-                            exit;
-                        end
-                    end
-                    if ismac
-                        disp('Please Update')
-                    end
-                else
-                    if ismac
-                        disp('No Update required')
-                    end
-                end
+
                 
                 this.elapsed_time = this.elapsed_time  + toc(st);
                 if this.interrupt; this.interrupt = 0; this.status = 1; return; end
@@ -556,11 +544,14 @@ classdef MeasureWindClass < WindClass
         end
                 
         function startup(this)
-            this.startAxial;
+            
             this.startSide1;
             this.startSide2;
             if ~this.velocityControlActive
+                this.startAxial;
                 this.waitForStartup;
+            else
+                this.PIDcontrolVelocity;    
             end
         end
         

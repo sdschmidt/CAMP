@@ -138,13 +138,23 @@ classdef MeasureWindClass_GUI < handle
                 this.Main.axialPercentage.String = [num2str(this.MWC.velocityTarget), ' m/s'];
                 this.Main.velocityTolerance.Visible = 'on';
                 this.Main.startPID.Visible = 'on';
+                this.Main.pidP.Visible = 'on';
+                this.Main.pidTi.Visible = 'on';
+                this.Main.pidTd.Visible = 'on';
             else
                 this.Main.axialPercentage.String = [num2str(this.MWC.axial * 100),' %'];
                 this.Main.velocityTolerance.Visible = 'off';
                 this.Main.startPID.Visible = 'off';
+                this.Main.pidP.Visible = 'off';
+                this.Main.pidTi.Visible = 'off';
+                this.Main.pidTd.Visible = 'off';
             end
             
-            this.Main.velocityTolerance.String = ['within ',num2str(this.MWC.velocityTargetTolerance),' m/s'];
+            this.Main.pidP.String = num2str(this.MWC.pidParameters(1));
+            this.Main.pidTi.String = num2str(this.MWC.pidParameters(2));
+            this.Main.pidTd.String = num2str(this.MWC.pidParameters(3));
+            
+            this.Main.velocityTolerance.String = [num2str(this.MWC.velocityTargetTolerance),' m/s Tolerance'];
             this.Main.side1percentage.String = [num2str(this.MWC.side1 * 100),' %'];
             this.Main.side2percentage.String = [num2str(this.MWC.side2 * 100),' %'];
             
