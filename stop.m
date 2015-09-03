@@ -1,19 +1,20 @@
+
 try
-    sds.MWC.stopAll;
+    CAMP.MWC.stopAll;
 catch
 end
 try 
-    close(sds.Main.mainMain)
+    close(CAMP.Main.mainMain)
 catch
 end
 try 
-    close(sds.Greeter.greeterMain)
+    close(CAMP.Greeter.greeterMain)
 catch
 end
 try 
-    close(sds.Measure.measureMain)
+    close(CAMP.Measure.measureMain)
 catch
 end
 close all; 
-clear sds; 
+clear CAMP; 
 path(pathdef);

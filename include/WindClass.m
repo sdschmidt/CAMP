@@ -7,17 +7,17 @@ classdef WindClass < handle
     % connectArduino()
     % 
 
-    properties (Hidden = true)
+    properties (Hidden = true, SetAccess = private)
         % position values
-        current = PositionClass2D([0 0]);
-        target  = PositionClass2D([0 0]);
+        current = PositionClass2D([0 0]);   % the current position of the movable probe
+        target  = PositionClass2D([0 0]);   % the target position of the movable probe
         
-        calibrated = 0;
-        
+        calibrated = 0;                     % 0 if no current position has been user set, otherwise one
         % fan percentages
-        percentages = [0 0 0];
-        startupTime = 90; % seconds
-        
+        percentages = [0 0 0];      
+    end
+    
+    properties (Hidden = true)
         % Arduino
         port = 'COM3';
         motorX = 1;
@@ -344,15 +344,11 @@ classdef WindClass < handle
         end
         
         function value = get.pressure_current(this)
-            value =  this.pinmapNegative.*this.volt2pressure(this.p_volt_current,this.pressure_range,this.voltage_range);
+            value =  sign(this.pinmapNegative).*this.volt2pressure(this.p_volt_current,this.pressure_range,this.voltage_range);
         end  
         
         function value = get.velocity(this)
             value = real(sqrt((this.pressure_current(8) - this.pressure_current(9))/this.rho(1)*2));
-        end
-        
-        function this = startstopMachine(~,pin,bool)
-            
         end
         
         function this = startAxial(this)   %% write function start/stop machine
@@ -572,7 +568,7 @@ classdef WindClass < handle
             end
         end
         
-       function reached = velocityInHalfTolerance(this)         % test if the velocity is in half of the given tolerance
+        function reached = velocityInHalfTolerance(this)         % test if the velocity is in half of the given tolerance
             error = this.velocityTarget - this.velocity; 
             if (abs(error) < abs(this.velocityTargetTolerance/2))
                 reached = true;
@@ -591,16 +587,13 @@ classdef WindClass < handle
             
             startSignal = this.running(1)*this.axial;
             this.status = 7;
-            samples = 20; deltaT = 0; startT = 0;               % parameters for measurements during control
-            %P = 0.0075; Ti = 5; Td = 0.1;                       % parameters for PID controller OK 10 m/s - 40m/s
-            %P = 0.0053; Ti = 5; Td = 0.1;                          % of fuer 20 m/s
-            %P = 0.005; Ti = 7.5; Td = 0;                       % 10 m/s - 40m/s
-            %P = 0.0053; Ti = 8; Td = 0;               % accurate for 40 m/s 20m/s  within+- 0.125 m/s tolerance
-                                         % timespan the velocity has to be in the tolerance in order to be declared as converged
-            P = this.pidParameters(1);
+            samples = 20; deltaT = 0; startT = 0; 	% parameters for measurements during control
+    
+                                        
+            P = this.pidParameters(1);              
             Ti = this.pidParameters(2);
             Td = this.pidParameters(3);
-            convergedTime = 2*Ti;            
+            convergedTime = 2*Ti;                   % timespan the velocity has to be in the tolerance in order to be declared as converged            
             this.takeMeasurement(samples,startT,deltaT); a = tic;
             lasterror = this.velocityTarget - this.velocity;
             Ierror = 0;

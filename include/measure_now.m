@@ -3,7 +3,6 @@ function [p_volt] = measure_now(a, n_sample, delta_t, pinmap)
 % n_sample: number of samples
 % delta_t : timestep between the samples
 % pinmap: list of pins to read from, eg [0 1 2 3 4 5 6 7 8]
-
     p_volt = zeros(1,numel(pinmap));
     for i=1:n_sample
         pause(delta_t);

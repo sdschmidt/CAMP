@@ -26,7 +26,7 @@ classdef MeasureWindClass < WindClass
         installdir = cd;
     end
     
-    properties (SetAccess = private, Hidden = true, SetObservable)
+    properties (SetAccess = private, SetObservable)
         measuredPosition                        % Variables prefixed with 'measured' contain the up to this point measured values
         measuredPoints                          % for Position, Points, Voltage, Pressure, Velocity, as well as the from the
         measuredPvolt                           % calibration data and measurement probe dependent values LossC, the velocity
@@ -37,8 +37,9 @@ classdef MeasureWindClass < WindClass
         measuredW2w1; 
         measuredAngles; 
         
-        elapsed_time = 0;                       % constantly incremented value which measures the time after starting the measurement
         measurementDefined = 0;                 % 0: no measurement loaded, 1: measurement loaded, 2: measurement started
+        
+        elapsed_time = 0;                       % constantly incremented value which measures the time after starting the measurement
     end
     
     properties (Hidden = true)
@@ -61,13 +62,15 @@ classdef MeasureWindClass < WindClass
         savelocation;                           % the savelocation constructed from name and basedor properties
         caliblocation;                          % the folder where the calibration data is saved
         timestamp;                              % the timestamp at the creation of the measurement
+                
+        startupTime = 90;                       % seconds
     
         currentLossC;                           % Loss Coefficient 
         currentW2w1;                            % Velocity Ratio   
         currentAngles;                          % Gamma, Beta, all obtained using the calibration data and the postprocessing function
     end
     
-     properties (Hidden = true)
+    properties (Hidden = true)
          % Calibration files for the 5 hole measurement probe
          % adjust the function 'loadCalibration' and 'postprocessing' to
          % change it to e.g a 7 hole measurement probe. 
@@ -156,11 +159,11 @@ classdef MeasureWindClass < WindClass
         end
         
         function createCalibration(this)
-            %try
+            try
                 copyfile(this.calibrationSource,this.caliblocation);
-            %catch
-            %    warning('no calibration data copied. Postprocessing may not be possible');
-            %end
+            catch
+                warning('no calibration data copied. Postprocessing may not be possible');
+            end
             fprintf('Calibration data saved to %s\n',this.caliblocation);
         end
         
@@ -364,7 +367,48 @@ classdef MeasureWindClass < WindClass
             this.measurementDefined = 1;
         end
         
-        function saveDataAppend(this)
+        function recalculate(this)
+            % recalculates the post processed data for current pressure
+            % range and calibration from raw data (measuredPVolt)
+            this.loadParameters;
+            this.loadCalibration; % l
+            this.measuredPressure = [];
+            this.measuredVelocity = [];  
+            this.measuredLossC = [];
+            this.measuredW2w1 = [];
+            this.measuredAngles = [];
+            i = 0;
+            for pvolt = this.measuredPvolt'
+                i = i + 1;
+                this.p_volt_current = pvolt';
+                this.measuredPressure(i,:) = this.pressure_current;
+                this.measuredVelocity(i) = this.velocity;
+                this.measuredLossC(i) =  this.currentLossC;                     
+                this.measuredW2w1(i) = this.currentW2w1;
+                this.measuredAngles(i,:) = this.currentAngles;
+            end
+            this.changeOccured;
+        end
+        
+        function saveData(this) %% overwrites
+            if this.savelocation
+                s = this.save_precision; 
+                dlmwrite([this.savelocation,this.filePosition],this.measuredPosition,'precision',s);
+                dlmwrite([this.savelocation,this.filePvolt],this.measuredPvolt ,'precision',s);
+                dlmwrite([this.savelocation,this.fileMeasuredPoints],this.measuredPoints ,'precision',s);
+                dlmwrite([this.savelocation,this.filePressure],this.measuredPressure,'precision',s);
+                dlmwrite([this.savelocation,this.fileVelocity],this.measuredVelocity,'precision',s);
+                dlmwrite([this.savelocation,this.fileLossC],this.measuredLossC,'precision',s);
+                dlmwrite([this.savelocation,this.fileW2W1],this.measuredW2w1,'precision',s,'-append');
+                dlmwrite([this.savelocation,this.fileAngles],this.measuredAngles,'precision',s,'-append');
+
+                fprintf('Saved data using location: %s\n',this.savelocation);
+            else
+                warning('no data saved. Please assign a savelocation with eg. using "this.newMeasurement" ')
+            end
+        end
+        
+        function saveDataAppend(this) %% appends
             if this.savelocation
             s = this.save_precision; 
             dlmwrite([this.savelocation,this.filePosition],[this.current.x,this.current.y,this.elapsed_time],'precision',s,'-append');
@@ -378,7 +422,7 @@ classdef MeasureWindClass < WindClass
             
             fprintf('Appended data using location: %s\n',this.savelocation);
             else
-                warning('no data saved. Please assign a savelocation with eg. using "this.newMeasurement" ')
+                warning('no data appended. Please assign a savelocation with eg. using "this.newMeasurement" ')
             end
         end
         

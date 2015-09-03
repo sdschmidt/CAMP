@@ -1,8 +1,8 @@
 % Startscript
 % ETS
 % written by Simon D. Schmidt
-ETSversionName = 'Shanghai';
-ETSversionNumber = 37;
+ETSversionName = 'Wuhan';
+ETSversionNumber = 41;
 ETSmaintainerContact = 'sd.schmidt@sikos.de';
 ETSmaintainerName = 'Simon Schmidt';
 ETSwebsite = 'http://www.sidash.de/ETS/';
@@ -18,8 +18,8 @@ addpath(installpath);
 clc;
 % Header
 type header;
-fprintf('%26s, no. %i     @@    @@@@        @@@@    @@\n', ['Version ',ETSversionName], ETSversionNumber);
-fprintf('                                                 @@@@@@@@\n'); 
+fprintf('%25s, no. %i                @@    @@@@        @@@@    @@\n', ['Version ',ETSversionName], ETSversionNumber);
+fprintf('                                                           @@@@@@@@\n'); 
 fprintf('>> Should there be any questions, don''t hesitate to contact <a href="mailto:%s">%s (%s)</a>\n',  ETSmaintainerContact, ETSmaintainerName, ETSmaintainerContact);
 fprintf('For further information see the website at <a href="%s">%s</a>\n', ETSwebsite, ETSwebsite);
 
@@ -40,7 +40,7 @@ versionpath = [serverpath,'version'];
 disp('>> Checking for Updates')
 newUpdate = 0;
 try
-    updateversion = str2double(urlread(versionpath));
+    updateversion = str2double(urlread(versionpath,'Timeout',15));
     if updateversion > ETSversionNumber
         newUpdate = 1;
     end
@@ -74,7 +74,7 @@ end
 if ~(newUpdate == 1)
     % Create new MeasureWindClass_GUI object
     configFile = ([installpath,'/SDSconfig.m']);
-    sds = MeasureWindClass_GUI(configFile);
+    CAMP = MeasureWindClass_GUI(configFile);
 end
 
 % Clear Workspace
