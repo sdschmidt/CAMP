@@ -55,6 +55,8 @@ classdef MeasureWindClass < WindClass
         save_precision = 6;                     % the precision with which to save the measured values
                 
         notes = '';                             % notes for the measurement
+        
+        startupTime = 90;                       % seconds
     end
     
     properties (Dependent)
@@ -63,7 +65,7 @@ classdef MeasureWindClass < WindClass
         caliblocation;                          % the folder where the calibration data is saved
         timestamp;                              % the timestamp at the creation of the measurement
                 
-        startupTime = 90;                       % seconds
+        
     
         currentLossC;                           % Loss Coefficient 
         currentW2w1;                            % Velocity Ratio   
@@ -292,9 +294,7 @@ classdef MeasureWindClass < WindClass
             if this.measurementDefined % only start if a measurement is loaded
                 % start measurement
                 this.measurementDefined = 2;
-                % start windchannel
-                this.startup
-
+                
                 % saveParameters, Points and Notes
                 this.saveParameters; 
                 this.savePoints;
@@ -304,6 +304,8 @@ classdef MeasureWindClass < WindClass
                 this.loadData;
                 this.loadCalibration;
                 
+                % start windchannel
+                this.startup
                 % measure loop
                 this.measureLoop;
                 disp('Measurement Loop finished')
@@ -397,10 +399,10 @@ classdef MeasureWindClass < WindClass
                 dlmwrite([this.savelocation,this.filePvolt],this.measuredPvolt ,'precision',s);
                 dlmwrite([this.savelocation,this.fileMeasuredPoints],this.measuredPoints ,'precision',s);
                 dlmwrite([this.savelocation,this.filePressure],this.measuredPressure,'precision',s);
-                dlmwrite([this.savelocation,this.fileVelocity],this.measuredVelocity,'precision',s);
-                dlmwrite([this.savelocation,this.fileLossC],this.measuredLossC,'precision',s);
-                dlmwrite([this.savelocation,this.fileW2W1],this.measuredW2w1,'precision',s,'-append');
-                dlmwrite([this.savelocation,this.fileAngles],this.measuredAngles,'precision',s,'-append');
+                dlmwrite([this.savelocation,this.fileVelocity],this.measuredVelocity','precision',s);
+                dlmwrite([this.savelocation,this.fileLossC],this.measuredLossC','precision',s);
+                dlmwrite([this.savelocation,this.fileW2W1],this.measuredW2w1','precision',s);
+                dlmwrite([this.savelocation,this.fileAngles],this.measuredAngles,'precision',s);
 
                 fprintf('Saved data using location: %s\n',this.savelocation);
             else

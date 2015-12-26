@@ -6,7 +6,7 @@
 % restart the program to see effect in changes
 
 % Where to save the Measurement Data
-this.MWC.basedir = '/Users/sdschmidt/Desktop/MessdatenAlex/';
+this.MWC.basedir = '/Users/sdschmidt/Desktop/Messdaten/';
 
 % Where to load the Calibration from;
 this.MWC.calibrationSource = [cd,'/calibration'];

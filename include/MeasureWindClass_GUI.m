@@ -349,19 +349,19 @@ classdef MeasureWindClass_GUI < handle
                     y = yv(1:yl,2);
 
                     data = this.MWC.measuredLossC;
-                    data(xl*yl) = 0;
+                    %data(xl*yl) = 0;
                     surf(this.loss.CurrentAxes,x,y,reshape(data,xl,yl)');
 
                     data = this.MWC.measuredW2w1;
-                    data(xl*yl) = 0;
+                    %data(xl*yl) = 0;
                     surf(this.velo.CurrentAxes,x,y,reshape(data,xl,yl)');
 
                     data = real(this.MWC.measuredVelocity);
-                    data(xl*yl) = 0;
+                    %data(xl*yl) = 0;
                     surf(this.axialV.CurrentAxes,x,y,reshape(data,xl,yl)'); 
                     
                     data = this.MWC.measuredAngles(:,2);
-                    data(xl*yl) = 0;
+                    %data(xl*yl) = 0;
                     surf(this.beta.CurrentAxes,x,y,reshape(data,xl,yl)'); 
                 catch
                     warning('could not plot')
