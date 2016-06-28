@@ -16,5 +16,7 @@ try
 catch
 end
 close all; 
-clear CAMP; 
+clear CAMP.MWC;
+clear CAMP;
+clear all;
 path(pathdef);
