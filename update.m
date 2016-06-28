@@ -4,7 +4,7 @@ function updateETS(installpath)
         disp('getting new files ...')
         tempfile = [tempdir,'newversion.zip'];
         try
-            urlwrite('http://www.sidash.de/ETS/newversion.zip',tempfile,'Timeout',600);
+            urlwrite('http://www.sidash.de/CAMP/newversion.zip',tempfile,'Timeout',600);
         catch
             disp('Could not retrieve update data ... exit')
             return;

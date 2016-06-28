@@ -1,7 +1,7 @@
 #!/bin/bash
 zip -r newversion.zip start.m stop.m include/ versionchanges Version.html
-scp newversion.zip sidash.de:/html/ETS/
-scp update.m sidash.de:/html/ETS
-scp version sidash.de:/html/ETS
-scp Version.html sidash.de:/html/ETS/index.html
+scp newversion.zip sidash.de:html/CAMP/
+scp update.m sidash.de:html/CAMP
+scp version sidash.de:html/CAMP
+scp Version.html sidash.de:html/CAMP/index.html
 rm ./*.zip

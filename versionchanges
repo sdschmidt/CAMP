@@ -2,3 +2,6 @@
 35: implemented control function in GUI. todo: adjust PID
 37: improvements & release, parameters and configFile
 40: stability improvements, logo change, name change
+42: set pins as output for in dependence of config. TODO: main.fig update 
+    update motd
+    github, reaktivate sidash.de/CAMP
