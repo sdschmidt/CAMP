@@ -132,28 +132,31 @@ classdef WindClass < handle
             end      
              
             if this.status
-            ledPin2 = 2;         this.ardBoard.pinMode(ledPin2,'output');
-            ledPin3 = 3;         this.ardBoard.pinMode(ledPin3,'output');
-            ledPin4 = 4;         this.ardBoard.pinMode(ledPin4,'output');
-            ledPin5 = 5;         this.ardBoard.pinMode(ledPin5,'output');
-            ledPin6 = 6;         this.ardBoard.pinMode(ledPin6,'output');
-            ledPin7 = 7;         this.ardBoard.pinMode(ledPin7,'output');
-            ledPin8 = 8;         this.ardBoard.pinMode(ledPin8,'output');
-            ledPin9 = 9;         this.ardBoard.pinMode(ledPin9,'output');
-            ledPin10 = 10;       this.ardBoard.pinMode(ledPin10,'output');
-            ledPin11 = 11;       this.ardBoard.pinMode(ledPin11,'output'); % axial start stop
-            ledPin12 = 12;       this.ardBoard.pinMode(ledPin12,'output'); % side2 start stop
-            ledPin13 = 13;       this.ardBoard.pinMode(ledPin13,'output'); % side1 start stop
-            ledPin42 = 42;       this.ardBoard.pinMode(ledPin42,'output'); % axial percentage
-            ledPin44 = 44;       this.ardBoard.pinMode(ledPin44,'output'); % side2 percentage
-            ledPin46 = 46;       this.ardBoard.pinMode(ledPin46,'output'); % side1 percentage
-            ledPin51 = 51;       this.ardBoard.pinMode(ledPin51,'output'); % general write 1
-            ledPin52 = 52;       this.ardBoard.pinMode(ledPin52,'output'); % general write 2
+                for pin = this.pinmapPressures
+                    fprintf('Setting pin %i as output\n',pin);
+                    this.ardBoard.pinMode(pin+2,'output') % set pins for pressure sensors 
+                end
+                
+                for pin = [this.pinStartStopAxial, this.pinStartStopSide1, this.pinStartStopSide2]
+                    fprintf('Setting pin %i as output\n',pin);
+                    this.ardBoard.pinMode(pin,'output') % set pins for start/stop
+                end
+                
+                for pin = [this.pinAxial, this.pinSide1, this.pinSide2]
+                    fprintf('Setting pin %i as output\n',pin);
+                    this.ardBoard.pinMode(pin,'output') % writing pins for axial, side1 and 2
+                end
+                
+                for pin = [this.pinWrite1, this.pinWrite2]
+                    fprintf('Setting pin %i as output\n',pin);
+                    this.ardBoard.pinMode(pin,'output') % general writing pins
+                end
+         
+                % not sure if needed, uncomment if so
+                % digitalWrite(this.ardBoard, 2, 0);
+                % digitalWrite(this.ardBoard, 6, 0);
             
-            digitalWrite(this.ardBoard, 2, 0);
-            digitalWrite(this.ardBoard, 6, 0);
-            
-                disp('reset percentages');
+                disp('reset percentages ...');
                 this.percentage = this.percentages;
             end
             this.changeOccured;
